@@ -22,7 +22,7 @@ export default class Pricing {
   }
 
   set currency(value) {
-    if (value instanceof (currency)) {
+    if (value instanceof (Currency)) {
       this._currency = value;
     }
     throw TypeError('currency must be an instance of Currency');
@@ -33,14 +33,12 @@ export default class Pricing {
   }
 
   static convertPrice(amount, conversionRate) {
-	  /*
     if (typeof amount !== 'number') {
       throw TypeError('amount must be a number');
     }
     if (typeof conversionRate !== 'number') {
       throw TypeError('conversionRate must be a number');
     }
-    */
     return amount * conversionRate;
   }
 }
