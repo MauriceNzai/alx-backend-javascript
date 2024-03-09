@@ -6,14 +6,17 @@ export default async function handleProfileSignup(firstName, lastName, fileName)
   const p2 = uploadPhoto(fileName);
 
   return Promise.allSettled([p1, p2])
-    .then((values) => {
-      const result = [];
-      values.forEach((value) => {
-        result.push({
-          status: value.status,
-          value: value || value.reason.message,
-        });
-      });
-      return result;
-    });
+    .then((values) => values
+      .map(({ status, value, reason }) => {
+        if (status === 'fulfilled') {
+          return {
+            status,
+            value,
+          };
+        }
+        return {
+          status,
+          value: `Error: ${reason.message}`,
+        };
+      }));
 }
