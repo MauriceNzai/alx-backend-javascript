@@ -6,8 +6,8 @@ export default function cleanSet(set, startString) {
   const words = [...set];
   return words
     // filter only words that begin with startString
-    .filter((word) => word !== undefined ? word.startsWith(startString) : "")
+    .filter((word) => (word !== undefined ? word.startsWith(startString) : ''))
     // map and slice word from startString.length then join all by '-'
-    .map((word) => word !== undefined ? word.slice(startString.length) : "")
+    .map((word) => (word !== undefined ? word.slice(startString.length) : ''))
     .join('-');
 }
