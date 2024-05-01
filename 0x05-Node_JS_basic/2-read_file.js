@@ -1,6 +1,6 @@
 #!/usr/bin/env node
+const fs = require('fs');
 function countStudents (path) {
-  const fs = require('fs');
   try {
     const data = fs.readFileSync(path, 'utf8');
     const students = data.split('\n')
