@@ -1,34 +1,42 @@
-#!/usr/bin/env node
 const fs = require('fs');
 
-async function readDatabase(filePath){
-  //const fs = require('fs');
-  let data;
-  try {
-    data = await fs.promises.readFile(path, 'utf8');
-    const students = data.split('\n')
-      .map((student) => student.split(','))
-      .filter((student) => student.length === 4 && student[0] !== 'firstname')
-      .map((student) => ({
-        firstName: student[0],
-        lastName: student[1],
-        age: student[2],
-        field: student[3]
-      }));
-      const csStudents = students
-	  .filter((student) => student.field === 'CS')
-      	  .map((student) => student.firstName);
-      console.log(csStudents);
-      const sweStudents = students
-	  .filter((student) => student.field === 'SWE')
-      	  .map((student) => student.firstName);
-      console.log(sweStudents);
-      console.log({csStudents, sweStudents})
-      return {csStudents, sweStudents};
-  } catch(err) {
-	throw Error('Cannot load the database');
-	  return;
-  }
-}
+module.exports = function readDatabase(path) {
+  return new Promise((resolve, reject) => {
+    fs.readFile(path, { encoding: 'utf-8' }, (err, data) => {
+      if (err) return reject(Error('Cannot load the database'));
+      // split data and taking only list without header
+      const lines = data.split('\n').slice(1, -1);
+      // give the header of data
+      const header = data.split('\n').slice(0, 1)[0].split(',');
+      // find firstname and field index
+      const idxFn = header.findIndex((ele) => ele === 'firstname');
+      const idxFd = header.findIndex((ele) => ele === 'field');
+      // declarate two dictionaries for count each fields and store list of students
+      const fields = {};
+      const students = {};
+      // it will contain all data
+      const all = {};
 
-module.exports =  readDatabase;
+      lines.forEach((line) => {
+        const list = line.split(',');
+        if (!fields[list[idxFd]]) fields[list[idxFd]] = 0;
+        fields[list[idxFd]] += 1;
+        if (!students[list[idxFd]]) students[list[idxFd]] = '';
+        students[list[idxFd]] += students[list[idxFd]]
+          ? `, ${list[idxFn]}`
+          : list[idxFn];
+      });
+      for (const key in fields) {
+        if (Object.hasOwnProperty.call(fields, key)) {
+          const number = fields[key];
+          all[key] = {
+            students: `List: ${students[key]}`,
+            number,
+          };
+        }
+      }
+
+      return resolve(all);
+    });
+  });
+};

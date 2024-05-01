@@ -1,11 +1,11 @@
 const express = require('express');
-const router = express.Router();
-
 const AppController = require('../controllers/AppController');
-const StudentsController = require('../controllers/StudentsController.js');
+const StudentsController = require('../controllers/StudentsController');
 
-router.get('/', (req, res) => AppController.getHomepage(req, res));
-router.get('/students', (req, res) => StudentsController.getAllStudents(req, res));
-router.get('/students/:major', (req, res) => StudentsController.getAllStudentsByMajor(req, res));
+const app = express();
 
-module.exports = router;
+app.get('/', ((request, response) => AppController.getHomepage(request, response)));
+app.get('/students', ((request, response) => StudentsController.getAllStudents(request, response)));
+app.get('/students/:major', ((request, response) => StudentsController.getAllStudentsByMajor(request, response)));
+
+module.exports = app;

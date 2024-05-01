@@ -1,35 +1,29 @@
-#!/usr/bin/env node
-const readDatabase = require("../utils");
+const readDatabase = require('../utils');
 
-const filePath = "../../database.csv";
-
-class StudentsController {
+module.exports = class StudentsController {
   static getAllStudents(request, response) {
-    const {csStudents, sweStudents} = readDatabase(filePath);
-    const message = "This is the list of our students";
-    const csStdts = `Number of students in CS: ${csStudents.length}. List: ${csStudents.join(', ')}`;
-    console.log(csStdts);
-    const sweStdts = `Number of students in SWE: ${sweStudents.length}. List: ${sweStudents.join(', ')}`;
-    console.log(csStdts);
-    return response
-        .status(200)
-	.send(message)
-	.send(csStdts)
-	.send(sweStdts);
+    readDatabase(process.argv[2])
+      .then((data) => {
+        let printData = 'This is the list of our students';
+        for (const field in data) {
+          if (Object.hasOwnProperty.call(data, field)) {
+            const element = data[field];
+            printData += `\nNumber of students in ${field}: ${element.number}. ${element.students}`;
+          }
+        }
+        response.send(printData);
+      })
+      .catch((err) => { response.send(err.message); });
   }
-  static getAllStudentsByMajor(request, response) {
-    let major = CS || SWE;
-    if (!major) {
-      return response.status(500).send("Major parameter must be CS or SWE");
-    }else {
-	const {csStudents, sweStudents} = readDatabase(filePath);
-	if (major === CS){
-	  return response.status(200).send(`List: ${csStudents.join(', ')}`);
-	}else{
-	  return response.status(200).send(`List: ${csStudents.join(', ')}`);
-	}
-    }
-  }
-}
 
-module.exports = StudentsController
+  static getAllStudentsByMajor(request, response) {
+    if (!['SWE', 'CS'].includes(request.params.major)) response.status(500).send('Major parameter must be CS or SWE');
+    readDatabase(process.argv[2])
+      .then((data) => {
+        const printData = data[request.params.major].students;
+        if (printData) response.send(printData);
+        response.status(500).send('Major parameter must be CS or SWE');
+      })
+      .catch((err) => { response.send(err.message); });
+  }
+};
