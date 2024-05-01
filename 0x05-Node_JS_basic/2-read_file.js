@@ -1,6 +1,7 @@
 #!/usr/bin/env node
 const fs = require('fs');
-function countStudents (path) {
+
+function countStudents(path) {
   try {
     const data = fs.readFileSync(path, 'utf8');
     const students = data.split('\n')
@@ -10,7 +11,7 @@ function countStudents (path) {
         firstName: student[0],
         lastName: student[1],
         age: student[2],
-        field: student[3]
+        field: student[3],
       }));
 
     const csStudents = students
@@ -24,7 +25,7 @@ function countStudents (path) {
     console.log(`Number of students: ${students.length}`);
     console.log(`Number of students in CS: ${csStudents.length}. List: ${csStudents.join(', ')}`);
     console.log(`Number of students in SWE: ${sweStudents.length}. List: ${sweStudents.join(', ')}`);
-  } catch {
+  } catch (error) {
     throw new Error('Cannot load the database');
   }
 }
