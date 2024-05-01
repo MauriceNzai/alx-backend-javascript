@@ -1,6 +1,7 @@
 #!/usr/bin/env node
-async function countStudents (path) {
-  const fs = require('fs');
+const fs = require('fs');
+
+async function countStudents(path) {
   let data;
   try {
     data = await fs.promises.readFile(path, 'utf8');
@@ -11,7 +12,7 @@ async function countStudents (path) {
         firstName: student[0],
         lastName: student[1],
         age: student[2],
-        field: student[3]
+        field: student[3],
       }));
 
     const csStudents = students
@@ -26,7 +27,7 @@ async function countStudents (path) {
     console.log(`Number of students in CS: ${csStudents.length}. List: ${csStudents.join(', ')}`);
     console.log(`Number of students in SWE: ${sweStudents.length}. List: ${sweStudents.join(', ')}`);
     return { students, csStudents, sweStudents };
-  } catch {
+  } catch (error) {
     throw new Error('Cannot load the database');
   }
 }
